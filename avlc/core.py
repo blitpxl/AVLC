@@ -31,7 +31,8 @@ class AudioPlayer(object):
         elif self.playbackMode == 2:
             self.play(randint(0, self.get_media_count() - 1))
         else:
-            warnings.warn("Invalid playback mode, Defaulting to normal playback mode.", RuntimeWarning)
+            msg = f"Invalid playback mode, Defaulting to normal playback mode."
+            warnings.warn(msg, RuntimeWarning)
             self.next()
         AudioPlayerEvent.TrackEndReached.call()
 
@@ -49,7 +50,8 @@ class AudioPlayer(object):
         if not trackIndex >= self.get_media_count():
             self.playerIndex = trackIndex
         else:
-            warnings.warn("Track Index out of range, Defaulting to 0", RuntimeWarning)
+            msg = f"Track Index out of range ({trackIndex}), Defaulting to 0"
+            warnings.warn(msg, RuntimeWarning)
             self.playerIndex = 0
         self.vlcPlayer.set_media(self.vlcMediaList[self.playerIndex])
         self.vlcPlayer.play()
@@ -90,7 +92,7 @@ class AudioPlayer(object):
         return len(self.vlcMediaList)
 
     def connect_event(self, eventType, function):
-        if hasattr(eventType, "callback_fn"):
+        if hasattr(eventType, "callbacks"):
             eventType.set_callback(function)
         else:
             def callback_thread(_):

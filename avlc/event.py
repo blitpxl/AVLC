@@ -4,13 +4,14 @@ from vlc import EventType
 class AvlcEvent(object):
     def __init__(self):
         super(AvlcEvent, self).__init__()
-        self.callback_fn = lambda: None
+        self.callbacks = []
 
     def call(self):
-        self.callback_fn()
+        for callback in self.callbacks:
+            callback()
 
     def set_callback(self, callback_fn):
-        self.callback_fn = callback_fn
+        self.callbacks.append(callback_fn)
 
 
 class AudioPlayerEvent(object):
