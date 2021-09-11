@@ -24,10 +24,14 @@ class AudioPlayerEvent(object):
     Stopped = EventType(262)
     Error = EventType(266)
     VolumeChanged = EventType(283)
+    PositionChanged = EventType(267)
 
     # avlc custom events. can be called internally or externally
     TrackEndReached = AvlcEvent()
+    PlaylistEndRepeat = AvlcEvent()
     PlaylistEndReached = AvlcEvent()
     NextTrack = AvlcEvent()
     PrevTrack = AvlcEvent()
     MediaAdded = AvlcEvent()
+    PlaybackModeChanged = AvlcEvent()
+    VolumeLimitReached = AvlcEvent()
