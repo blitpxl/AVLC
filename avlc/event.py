@@ -1,17 +1,33 @@
 from vlc import EventType
 
 
-class AvlcEvent(object):
-    def __init__(self):
-        super(AvlcEvent, self).__init__()
-        self.callbacks = []
+class AvlcEventObject(object):
+    def __init__(self, allowMultipleAssignment: bool = True):
+        super(AvlcEventObject, self).__init__()
+        self.multipleAssignment = allowMultipleAssignment
 
-    def call(self):
-        for callback in self.callbacks:
-            callback()
+        self.callbacks = []
+        self.callback = lambda x=None: None
+
+    def __call__(self, arg=None):
+        if self.multipleAssignment:
+            if arg is None:
+                for callback in self.callbacks:
+                    callback()
+            else:
+                for callback in self.callbacks:
+                    callback(arg)
+        else:
+            if arg is None:
+                self.callback()
+            else:
+                self.callback(arg)
 
     def set_callback(self, callback_fn):
-        self.callbacks.append(callback_fn)
+        if self.multipleAssignment:
+            self.callbacks.append(callback_fn)
+        else:
+            self.callback = callback_fn
 
 
 class AudioPlayerEvent(object):
@@ -19,6 +35,8 @@ class AudioPlayerEvent(object):
     InternalTrackEndReached = EventType(265)
 
     # native vlc events
+    Opening = EventType(258)
+    Buffering = EventType(259)
     Playing = EventType(260)
     Paused = EventType(261)
     Stopped = EventType(262)
@@ -27,11 +45,20 @@ class AudioPlayerEvent(object):
     PositionChanged = EventType(267)
 
     # avlc custom events. can be called internally or externally
-    TrackEndReached = AvlcEvent()
-    PlaylistEndRepeat = AvlcEvent()
-    PlaylistEndReached = AvlcEvent()
-    NextTrack = AvlcEvent()
-    PrevTrack = AvlcEvent()
-    MediaAdded = AvlcEvent()
-    PlaybackModeChanged = AvlcEvent()
-    VolumeLimitReached = AvlcEvent()
+    TrackEndReached = AvlcEventObject()
+    PlaylistEndRepeat = AvlcEventObject()
+    PlaylistEndReached = AvlcEventObject()
+    NextTrack = AvlcEventObject()
+    PrevTrack = AvlcEventObject()
+    MediaAdded = AvlcEventObject()
+    PlaybackModeChanged = AvlcEventObject()
+    VolumeLimitReached = AvlcEventObject()
+    CleanupEvent = AvlcEventObject()
+    ArgsChanged = AvlcEventObject()
+
+
+class MediaEvent(object):
+    InternalParsed = EventType(3)
+    DurationChanged = EventType(2)
+
+    Parsed = AvlcEventObject(allowMultipleAssignment=False)
